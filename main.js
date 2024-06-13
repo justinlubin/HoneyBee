@@ -2,7 +2,7 @@ const workspaceDiv = document.getElementById("blockly");
 
 const workspace = Blockly.inject(workspaceDiv, {
   toolbox: BLOCKLY_TOOLBOX,
-  scrollbars: true,
+  move: { scrollbars: true, wheel: true },
   zoom: { controls: true },
   sounds: false,
 });
