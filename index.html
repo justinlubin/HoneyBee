@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <title>Honeybee</title>
+    <link rel="stylesheet" href="main.css">
+
+    <!-- Courtesy of favicon.io; see FAVICON_LICENSE.txt -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Load Blockly core -->
+    <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
+    <!-- Load the default blocks -->
+    <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
+    <!-- Load a generator -->
+    <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
+    <!-- Load a message file -->
+    <script src="https://unpkg.com/blockly/msg/en.js"></script>
+
+    <script defer type="module" src="main.js"></script>
+  </head>
+
+  <body>
+    <div id="blockly"></div>
+    <button id="compile">Generate Jupyter Notebook</button>
+    <div id="bee">🐝</div>
+  </body>
+</html>
