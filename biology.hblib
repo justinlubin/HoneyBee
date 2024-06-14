@@ -1,1 +1,60 @@
-../examples/biology.hblib
+; Sequencing
+
+(ground fact Seq
+  (.sample Str) (.at Int) (.data Str))
+
+(derived fact ReadCountMatrix1
+  (.sample Str) (.at Int))
+
+(derived fact ReadCountMatrix2
+  (.sample1 Str) (.sample2 Str) (.at Int))
+
+(computation load_local_reads ReadCountMatrix1
+  ((seq Seq))
+  ((= (.sample ret) (.sample seq))
+   (= (.at ret) (.at seq))))
+
+(computation aggregate_reads ReadCountMatrix2
+  ((rcm1 ReadCountMatrix1) (rcm2 ReadCountMatrix1))
+  ((= (.sample1 ret) (.sample rcm1))
+   (= (.sample2 ret) (.sample rcm2))
+   (= (.at ret) (.at rcm1))
+   (= (.at rcm1) (.at rcm2))))
+
+; Bulk RNA-seq
+
+(derived fact DifferentialGeneExpression
+  (.sample1 Str) (.sample2 Str) (.at Int))
+
+(computation combat_seq ReadCountMatrix2
+  ((rcm ReadCountMatrix2))
+  ((= (.sample1 ret) (.sample1 rcm))
+   (= (.sample2 ret) (.sample2 rcm))
+   (= (.at ret) (.at rcm))))
+
+(computation deseq2 DifferentialGeneExpression
+  ((rcm ReadCountMatrix2))
+  ((= (.sample1 ret) (.sample1 rcm))
+   (= (.sample2 ret) (.sample2 rcm))
+   (= (.at ret) (.at rcm))))
+
+; Transfection and growth
+
+(ground fact Transfect
+  (.sample Str) (.at Int) (.library Str))
+
+(derived fact GrowthPhenotype
+  (.sample Str) (.start Int) (.end Int))
+
+(computation growth_phenotype GrowthPhenotype
+  ((t Transfect)
+   (rcm1 ReadCountMatrix1)
+   (rcm2 ReadCountMatrix1))
+  ((= (.sample ret) (.sample t))
+   (= (.start ret) (.at rcm1))
+   (= (.end ret) (.at rcm2))
+   (= (.sample t) (.sample rcm1))
+   (= (.sample t) (.sample rcm2))
+   (< (.at t) (.at rcm1))
+   (< (.at rcm1) (.at rcm2))))
+
