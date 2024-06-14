@@ -2,6 +2,8 @@
 
 <html lang="en">
   <head>
+    <link rel="stylesheet" href="main.css">
+
     <!-- Load Blockly core -->
     <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
     <!-- Load the default blocks -->
@@ -15,6 +17,7 @@
   </head>
 
   <body>
-    <div id="blockly" style="position: absolute; top:0; left:0; right:0; bottom:0;"></div>
+    <div id="blockly"></div>
+    <button id="compile">Generate Jupyter Notebook</button>
   </body>
 </html>

@@ -1,12 +1,42 @@
-import init, { parse_library } from "./pkg/honeybee.js";
+import init, * as Honeybee from "./pkg/honeybee.js";
+
+////////////////////////////////////////////////////////////////////////////////
+// Helpers
+
+// https://stackoverflow.com/a/18197341
+function download(filename, text) {
+  const element = document.createElement("a");
+  element.setAttribute(
+    "href",
+    "data:text/plain;charset=utf-8," + encodeURIComponent(text),
+  );
+  element.setAttribute("download", filename);
+
+  element.style.display = "none";
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Initialize Rust
 
 await init();
 
+////////////////////////////////////////////////////////////////////////////////
+// Load library
+
 const libraryRes = await fetch("biology.hblib");
 const librarySrc = await libraryRes.text();
-const library = parse_library(librarySrc);
+const library = Honeybee.parse_library(librarySrc);
 
-function toolboxEntry() {}
+const impRes = await fetch("biology.py");
+const impSrc = await impRes.text();
+
+////////////////////////////////////////////////////////////////////////////////
+// Construct Blockly blocks from library
 
 const blockDefinitions = [];
 const toolboxFacts = [];
@@ -70,9 +100,9 @@ for (const fs of library.fact_signatures) {
     for (const [parameter_name, parameter_type] of fs.params) {
       const value = block.getFieldValue(parameter_name);
       if (parameter_type === "Int") {
-        s += ` ${value}`;
+        s += ` (.${parameter_name} ${value})`;
       } else if (parameter_type === "Str") {
-        s += ` "${value}"`;
+        s += ` (.${parameter_name} "${value}")`;
       } else {
         throw new Error(
           `Unknown parameter type for ${parameter_name}: ${parameter_type}`,
@@ -106,6 +136,9 @@ const blocklyToolbox = {
     .concat(toolboxGoals),
 };
 
+////////////////////////////////////////////////////////////////////////////////
+// Initialize Blockly
+
 const workspaceDiv = document.querySelector("#blockly");
 
 const workspace = Blockly.inject(workspaceDiv, {
@@ -116,6 +149,13 @@ const workspace = Blockly.inject(workspaceDiv, {
 });
 
 workspace.addChangeListener(Blockly.Events.disableOrphans);
+
+window.addEventListener("resize", (_) => {
+  Blockly.svgResize(workspace);
+});
+
+////////////////////////////////////////////////////////////////////////////////
+// Define Blockly top-level block
 
 Blockly.Blocks.toplevel = {
   init() {
@@ -141,30 +181,38 @@ Blockly.serialization.blocks.append(
   workspace,
 );
 
-window.addEventListener("resize", (_) => {
-  Blockly.svgResize(workspace);
+////////////////////////////////////////////////////////////////////////////////
+// Compile
+
+const compileButton = document.getElementById("compile");
+
+compileButton.addEventListener("click", (_) => {
+  const progSrc = Blockly.JavaScript.workspaceToCode(workspace);
+  try {
+    const notebook = Honeybee.generate_notebook(librarySrc, impSrc, progSrc);
+    download("analysis.ipynb", notebook);
+  } catch (e) {
+    alert(e);
+  }
 });
 
-// CLI Helpers
+////////////////////////////////////////////////////////////////////////////////
+// Helpers
 
-export function compile() {
-  return Blockly.JavaScript.workspaceToCode(workspace);
-}
-
-export function saveStorage() {
-  const state = Blockly.serialization.workspaces.save(workspace);
-  localStorage.setItem("workspace-state", JSON.stringify(state));
-}
-
-export function loadStorage() {
-  const state = localStorage.getItem("workspace-state");
-  Blockly.serialization.workspaces.load(JSON.parse(state), workspace);
-}
-
-export function clearStorage() {
-  localStorage.removeItem("workspace-state");
-}
-
-export function clearCurrent() {
-  workspace.clear();
-}
+// export function saveStorage() {
+//   const state = Blockly.serialization.workspaces.save(workspace);
+//   localStorage.setItem("workspace-state", JSON.stringify(state));
+// }
+//
+// export function loadStorage() {
+//   const state = localStorage.getItem("workspace-state");
+//   Blockly.serialization.workspaces.load(JSON.parse(state), workspace);
+// }
+//
+// export function clearStorage() {
+//   localStorage.removeItem("workspace-state");
+// }
+//
+// export function clearCurrent() {
+//   workspace.clear();
+// }
