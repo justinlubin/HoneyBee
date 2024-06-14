@@ -21,4 +21,27 @@
   z-index: 1;
   bottom: 20px;
   left: 20px;
+  cursor: default;
+}
+
+@keyframes waggle-dance {
+  0% { transform: translateX(0px) rotate(0deg); }
+  10% { transform: translateX(10px) rotate(0deg); }
+  15% { transform: translateX(10px) rotate(0deg); }
+  25% { transform: translateX(0px) rotate(0deg); }
+  30% { transform: translateX(0px) rotate(0deg); }
+  35% { transform: rotate(10deg); }
+  40% { transform: rotate(-10deg); }
+  45% { transform: rotate(10deg); }
+  50% { transform: rotate(-10deg); }
+  55% { transform: rotate(10deg); }
+  60% { transform: rotate(-10deg); }
+  65% { transform: rotate(10deg); }
+  70% { transform: rotate(-10deg); }
+  75% { transform: rotate(0deg); }
+  100% { transform: rotate(0eg); }
+}
+
+#bee:hover {
+  animation: waggle-dance 3s infinite;
 }
