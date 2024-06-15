@@ -19,15 +19,15 @@
 #bee {
   position: absolute;
   z-index: 1;
-  bottom: 20px;
-  left: 20px;
+  bottom: 155px;
+  right: 43px;
   cursor: default;
 }
 
 @keyframes waggle-dance {
   0% { transform: translateX(0px) rotate(0deg); }
-  10% { transform: translateX(10px) rotate(0deg); }
-  15% { transform: translateX(10px) rotate(0deg); }
+  10% { transform: translateX(-10px) rotate(0deg); }
+  15% { transform: translateX(-10px) rotate(0deg); }
   25% { transform: translateX(0px) rotate(0deg); }
   30% { transform: translateX(0px) rotate(0deg); }
   35% { transform: rotate(10deg); }
